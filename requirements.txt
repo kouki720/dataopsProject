@@ -1,0 +1,26 @@
+
+# Data ingestion
+dlt[duckdb]
+
+# Data Warehouse
+duckdb
+
+# Data transformation
+dbt-duckdb
+
+# Data processing
+pandas
+requests
+
+# Configuration
+python-dotenv
+PyYAML
+
+# Orchestration
+prefect
+
+# Testing
+pytest
+
+# Code quality
+ruff
