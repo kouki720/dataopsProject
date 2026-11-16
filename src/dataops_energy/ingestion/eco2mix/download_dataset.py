@@ -26,7 +26,7 @@ TIME_API_URL = "https://timeapi.io/api/Time/current/zone"
 PARIS_TZ = ZoneInfo("Europe/Paris")
 UTC_TZ = ZoneInfo("UTC")
 
-START_DATE = "2024-01-01T00:00:00"
+START_DATE = "2025-01-01T00:00:00"
 
 OUTPUT_DIR = PROJECT_ROOT / "data" / "raw" / "eco2mix"
 OUTPUT_FILE = OUTPUT_DIR / f"{DATASET_ID}.csv"
