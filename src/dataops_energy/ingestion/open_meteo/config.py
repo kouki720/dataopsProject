@@ -33,7 +33,7 @@ TEMPORARY_FILE = OUTPUT_DIR / "weather_france.csv.part"
 
 ARCHIVE_API_URL = "https://archive-api.open-meteo.com/v1/archive"
 
-START_DATE = "2024-01-01"
+START_DATE = "2025-01-01"
 
 TIMEZONE = "UTC"
 
