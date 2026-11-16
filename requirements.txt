@@ -1,4 +1,3 @@
-
 # Data ingestion
 dlt[duckdb]
 
@@ -24,3 +23,6 @@ pytest
 
 # Code quality
 ruff
+
+# Data versioning
+dvc[gdrive]
