@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DBT_PROFILES_DIR: ${{ runner.temp }}/dbt_profiles
-      CI_DUCKDB_PATH: ${{ runner.temp }}/ci.duckdb
+        DBT_PROFILES_DIR: ${{ github.workspace }}/.ci/dbt_profiles
+        CI_DUCKDB_PATH: ${{ github.workspace }}/.ci/ci.duckdb
 
     steps:
       - name: Checkout repository
