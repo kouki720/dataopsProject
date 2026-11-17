@@ -1,0 +1,9 @@
+
+energy_warehouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "C:/PATH/TO/dataops-energy/warehouse/dev/dev.duckdb"
+      schema: analytics
+      threads: 4

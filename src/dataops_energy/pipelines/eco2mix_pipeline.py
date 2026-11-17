@@ -28,7 +28,7 @@ PIPELINE_NAME = "eco2mix_pipeline"
 
 TABLE_NAME = "eco2mix"
 
-WRITE_DISPOSITION = "merge"
+WRITE_DISPOSITION = "replace"
 
 
 def run():

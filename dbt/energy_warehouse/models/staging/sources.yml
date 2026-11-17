@@ -1,0 +1,32 @@
+
+version: 2
+
+sources:
+  - name: energy_raw
+    schema: raw
+    description: "Tables brutes chargées par DLT dans DuckDB."
+
+    tables:
+      - name: eco2mix
+        description: "Données de consommation et de production électrique."
+        config:
+          loaded_at_field: "CAST(date_heure AS TIMESTAMPTZ)"
+          freshness:
+            warn_after:
+              count: 24
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+
+      - name: weather
+        description: "Données météorologiques horaires."
+        config:
+          loaded_at_field: "CAST(date_heure AS TIMESTAMPTZ)"
+          freshness:
+            warn_after:
+              count: 2
+              period: hour
+            error_after:
+              count: 6
+              period: hour
