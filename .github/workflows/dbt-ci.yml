@@ -1,0 +1,102 @@
+
+name: dbt CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dbt-validation:
+    name: Validate dbt project
+    runs-on: ubuntu-latest
+
+    env:
+      DBT_PROFILES_DIR: ${{ runner.temp }}/dbt_profiles
+      CI_DUCKDB_PATH: ${{ runner.temp }}/ci.duckdb
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create temporary DuckDB database
+        run: |
+          python - <<'PY'
+          import os
+          from datetime import datetime, timezone
+          import duckdb
+
+          db_path = os.environ["CI_DUCKDB_PATH"]
+          conn = duckdb.connect(db_path)
+
+          conn.execute("CREATE SCHEMA IF NOT EXISTS raw")
+
+          current_time = datetime.now(timezone.utc).isoformat()
+
+          conn.execute("""
+              CREATE TABLE raw.eco2mix (
+                  date_heure VARCHAR
+              )
+          """)
+
+          conn.execute("""
+              CREATE TABLE raw.weather (
+                  date_heure VARCHAR
+              )
+          """)
+
+          conn.execute(
+              "INSERT INTO raw.eco2mix VALUES (?)",
+              [current_time],
+          )
+
+          conn.execute(
+              "INSERT INTO raw.weather VALUES (?)",
+              [current_time],
+          )
+
+          print("Tables raw.eco2mix et raw.weather créées.")
+          print(f"Date de test UTC : {current_time}")
+
+          conn.close()
+          PY
+
+      - name: Create dbt profile
+        run: |
+          mkdir -p "$DBT_PROFILES_DIR"
+
+          cat > "$DBT_PROFILES_DIR/profiles.yml" <<EOF
+          energy_warehouse:
+            target: dev
+            outputs:
+              dev:
+                type: duckdb
+                path: "$CI_DUCKDB_PATH"
+                schema: analytics
+                threads: 4
+          EOF
+
+      - name: Check dbt configuration
+        run: |
+          dbt debug --project-dir dbt/energy_warehouse
+
+      - name: Check source freshness
+        run: |
+          dbt source freshness --project-dir dbt/energy_warehouse

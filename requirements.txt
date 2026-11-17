@@ -1,11 +1,13 @@
+
 # Data ingestion
 dlt[duckdb]
 
 # Data Warehouse
-duckdb
+duckdb==1.5.6
 
 # Data transformation
-dbt-duckdb
+dbt-core==1.12.7
+dbt-duckdb==1.11.1
 
 # Data processing
 pandas
