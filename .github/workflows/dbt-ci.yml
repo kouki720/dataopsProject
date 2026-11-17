@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        DBT_PROFILES_DIR: ${{ github.workspace }}/.ci/dbt_profiles
-        CI_DUCKDB_PATH: ${{ github.workspace }}/.ci/ci.duckdb
+      DBT_PROFILES_DIR: ${{ github.workspace }}/.ci/dbt_profiles
+      CI_DUCKDB_PATH: ${{ github.workspace }}/.ci/ci.duckdb
 
     steps:
       - name: Checkout repository
@@ -38,12 +38,15 @@ jobs:
 
       - name: Create temporary DuckDB database
         run: |
+          mkdir -p .ci
+
           python - <<'PY'
           import os
           from datetime import datetime, timezone
           import duckdb
 
           db_path = os.environ["CI_DUCKDB_PATH"]
+
           conn = duckdb.connect(db_path)
 
           conn.execute("CREATE SCHEMA IF NOT EXISTS raw")
