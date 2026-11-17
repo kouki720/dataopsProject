@@ -1,5 +1,6 @@
 
 import csv
+import sys
 from pathlib import Path
 from typing import Iterator
 
@@ -20,7 +21,9 @@ PRIMARY_KEY = ["code_insee_epci", "date_heure"]
 
 def get_duckdb_path() -> Path:
     """Retourne le chemin de la base DuckDB DEV."""
+
     DUCKDB_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     return DUCKDB_PATH
 
 
@@ -37,6 +40,7 @@ def get_csv_columns(csv_path: Path) -> list[str]:
         encoding="utf-8-sig",
         newline="",
     ) as file:
+
         reader = csv.reader(file, delimiter=";")
         columns = next(reader, None)
 
@@ -76,10 +80,7 @@ def iter_csv_batches(
     batch_size: int = BATCH_SIZE,
 ) -> Iterator[list[dict[str, str]]]:
     """
-    Lit le CSV progressivement et transmet des lots de lignes.
-
-    L'en-tête est consommé correctement.
-    Affiche la progression toutes les 10 000 lignes extraites.
+    Lit le CSV progressivement et transmet les lignes par lots.
     """
 
     if not csv_path.exists():
@@ -110,15 +111,11 @@ def iter_csv_batches(
             delimiter=";",
         )
 
-        # Consomme l'en-tête original du CSV.
-        original_headers = reader.fieldnames
-
-        if original_headers is None:
+        if reader.fieldnames is None:
             raise ValueError(
                 f"En-tête CSV introuvable : {csv_path}"
             )
 
-        # Utilise les noms de colonnes nettoyés.
         reader.fieldnames = columns
 
         for row in reader:
@@ -162,7 +159,7 @@ def create_csv_resource(
     write_disposition: str = "merge",
     batch_size: int = BATCH_SIZE,
 ):
-    """Crée une ressource DLT configurée pour les lots et le merge."""
+    """Crée une ressource DLT configurée pour le chargement."""
 
     columns = get_csv_columns(csv_path)
 
@@ -218,9 +215,7 @@ def run_csv_pipeline(
     print(f"Table       : {table_name}")
     print(f"Mode        : {write_disposition}")
     print(f"Taille lot  : {batch_size:,}")
-    print(
-        f"Clé primaire: {' + '.join(PRIMARY_KEY)}"
-    )
+    print(f"Clé primaire: {' + '.join(PRIMARY_KEY)}")
 
     print("=" * 70)
 

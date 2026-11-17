@@ -28,7 +28,7 @@ PIPELINE_NAME = "weather_pipeline"
 
 TABLE_NAME = "weather"
 
-WRITE_DISPOSITION = "replace"
+WRITE_DISPOSITION = "merge"
 
 
 def run():
